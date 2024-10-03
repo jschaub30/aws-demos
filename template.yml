@@ -1,6 +1,34 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred  # Fix: Set ownership control to ensure the bucket owner owns all objects
+
+  # allow public access to the webapp files
+  WebAppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebAppBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub "arn:aws:s3:::${WebAppBucket}/*"
+
   # S3 Bucket Resource with EventBridge enabled
   S3DataBucket:
     Type: AWS::S3::Bucket
@@ -218,3 +246,15 @@ Outputs:
   QueryJobsArn:
     Description: "ARN of QueryJobs Lambda function"
     Value: !GetAtt QueryJobs.Arn
+
+  WebAppBucketName:
+    Description: "S3 Bucket name for the static website"
+    Value: !Ref WebAppBucket
+
+  WebAppURL:
+    Description: "URL of the static website"
+    Value: !GetAtt WebAppBucket.WebsiteURL
+
+  ApiGatewayURL:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/job"
