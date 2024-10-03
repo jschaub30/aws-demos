@@ -17,6 +17,7 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
+table_name = os.environ.get('TABLE_NAME')
 TABLE = dynamodb.Table(table_name)
 
 s3 = boto3.client('s3')
@@ -202,9 +203,12 @@ def process_file(bucket_name: str, object_key: str, job_id, config: Dict[str, An
 
 
 def lambda_handler(event, context):
-    # print(json.dumps(event))  # use to create test cases
-    bucket_name = event['Records'][0]['s3']['bucket']['name']
-    object_key = event['Records'][0]['s3']['object']['key']
+    logging.debug(json.dumps(event, indent=2))  # use to create test cases
+    logging.debug(os.listdir("/opt"))
+    logging.debug(os.listdir("/opt/lib"))
+    logging.debug(os.listdir("/opt/lib64"))
+    bucket_name = event['detail']['bucket']['name']
+    object_key = event['detail']['object']['key']
     job_id = object_key.split("input/")[1].split("/")[0]
     result = process_file(bucket_name, object_key, job_id, None)
     expiration_time_sec = 172800  # 2 days

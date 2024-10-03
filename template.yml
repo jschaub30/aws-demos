@@ -1,9 +1,33 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  # S3 Bucket Resource
+  # S3 Bucket Resource with EventBridge enabled
   S3DataBucket:
     Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            AllowedHeaders:
+              - '*'
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3000
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
 
   # DynamoDB Table
   DocumentConversionJobsTable:
@@ -12,37 +36,83 @@ Resources:
       TableName: "DocumentConversionJobs"
       AttributeDefinitions:
         - AttributeName: "job_id"
-          AttributeType: "S"  # String type for Partition Key
+          AttributeType: "S"
         - AttributeName: "created_at"
-          AttributeType: "S"  # String type for Sort Key
+          AttributeType: "S"
       KeySchema:
         - AttributeName: "job_id"
-          KeyType: "HASH"  # Partition Key
+          KeyType: "HASH"
         - AttributeName: "created_at"
-          KeyType: "RANGE"  # Sort Key
-      BillingMode: "PAY_PER_REQUEST"  # On-demand billing mode
+          KeyType: "RANGE"
+      BillingMode: "PAY_PER_REQUEST"
       Tags:
         - Key: "Environment"
           Value: "Production"
         - Key: "Project"
           Value: "DocumentConversion"
 
+  # EventBridge Rule to trigger the Convert Lambda function
+  S3UploadEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      EventPattern:
+        source:
+          - "aws.s3"
+        detail-type:
+          - "Object Created"
+        detail:
+          bucket:
+            name:
+              - !Ref S3DataBucket
+          object:
+            key:
+              - prefix: "input/"
+      Targets:
+        - Arn: !GetAtt Convert.Arn
+          Id: "ConvertFunctionTarget"
+      State: ENABLED
+
+  # Define the API Gateway and enable CORS globally for all methods
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'POST, GET, OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
   # First Lambda function (API Gateway integration)
   GenPresignedUrl:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
-      Runtime: python3.12  # Adjust runtime as per your code
-      CodeUri: ./src/gen_presigned_url/  # Location of the Lambda code
+      Runtime: python3.12
+      CodeUri: ./src/lambda/gen_presigned_url/
+      Timeout: 10
       Environment:
         Variables:
-          TABLE_NAME: !Ref DocumentConversionJobsTable  # Pass DynamoDB table name to Lambda
+          TABLE_NAME: !Ref DocumentConversionJobsTable
+          BUCKET_NAME: !Ref S3DataBucket
       Events:
-        ApiGatewayEvent:
+        ApiEvent:
           Type: Api
           Properties:
             Path: /job
             Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: !Sub "arn:aws:s3:::${S3DataBucket}/*"
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DocumentConversionJobsTable}"
 
   # Second Lambda function (API Gateway integration)
   QueryJobs:
@@ -50,32 +120,45 @@ Resources:
     Properties:
       Handler: app.lambda_handler
       Runtime: python3.12
-      CodeUri: ./src/query_jobs/
+      Timeout: 5
+      CodeUri: ./src/lambda/query_jobs/
       Environment:
         Variables:
           TABLE_NAME: !Ref DocumentConversionJobsTable
       Events:
-        ApiGatewayEvent:
+        ApiEvent:
           Type: Api
           Properties:
             Path: /job
             Method: GET
+            RestApiId:
+              Ref: ApiGatewayApi
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Query
+              Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DocumentConversionJobsTable}"
 
+  # Lambda Layer for Tesseract
   TesseractLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: TesseractLayer
       Description: Tesseract bin and libraries
-      ContentUri: ./src/layers/tesseract-layer-x86_64.zip
+      ContentUri: ./src/lambda/layers/tesseract-layer-x86_64.zip
       CompatibleRuntimes:
         - python3.12
 
+  # Lambda Layer for Poppler
   PopplerLambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: PopplerLayer
       Description: Poppler bin and libraries
-      ContentUri: ./src/layers/poppler-layer-x86_64.zip
+      ContentUri: ./src/lambda/layers/poppler-layer-x86_64.zip
       CompatibleRuntimes:
         - python3.12
 
@@ -85,18 +168,39 @@ Resources:
     Properties:
       Handler: app.lambda_handler
       Runtime: python3.12
-      MemorySize: 512  # Set memory size to 512MB
-      CodeUri: ./src/convert/
+      MemorySize: 512
+      Timeout: 60
+      CodeUri: ./src/lambda/convert/
       Environment:
         Variables:
           BUCKET_NAME: !Ref S3DataBucket
-          LD_LIBRARY_PATH: "/opt/lib:/opt:lib64"
+          LD_LIBRARY_PATH: "/opt/lib:/opt/lib64"
           PATH: "/opt/bin"
           TESSDATA_PREFIX: "/opt/tessdata"
           TABLE_NAME: !Ref DocumentConversionJobsTable
       Layers:
-        - !Ref TesseractLambdaLayer  # created above
-        - !Ref PopplerLambdaLayer  # created above
+        - !Ref TesseractLambdaLayer
+        - !Ref PopplerLambdaLayer
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource: !Sub "arn:aws:s3:::${S3DataBucket}/*"
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${DocumentConversionJobsTable}"
+
+  ConvertInvokeByEventBridge:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt Convert.Arn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt S3UploadEventRule.Arn
 
 Outputs:
   S3BucketName:
@@ -114,7 +218,3 @@ Outputs:
   QueryJobsArn:
     Description: "ARN of QueryJobs Lambda function"
     Value: !GetAtt QueryJobs.Arn
-
-  ApiGatewayUrl:
-    Description: "API Gateway endpoint"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
