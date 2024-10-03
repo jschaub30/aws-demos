@@ -1,4 +1,4 @@
-# Serverless Document Conversion SAM template
+# SAM template for document conversion demo
 
 AWS Serverless Application Model (SAM) template for Document Conversion
 
