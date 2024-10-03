@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  S3DataBucket:
+    Type: AWS::S3::Bucket
+  DocumentConversionJobsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: DocumentConversionJobs
+      AttributeDefinitions:
+      - AttributeName: job_id
+        AttributeType: S
+      - AttributeName: created_at
+        AttributeType: S
+      KeySchema:
+      - AttributeName: job_id
+        KeyType: HASH
+      - AttributeName: created_at
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+      - Key: Environment
+        Value: Production
+      - Key: Project
+        Value: DocumentConversion
+  GenPresignedUrl:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      CodeUri: GenPresignedUrl
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: DocumentConversionJobsTable
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /job
+            Method: POST
+    Metadata:
+      SamResourceId: GenPresignedUrl
+  QueryJobs:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      CodeUri: QueryJobs
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: DocumentConversionJobsTable
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /job
+            Method: GET
+    Metadata:
+      SamResourceId: QueryJobs
+  TesseractLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: TesseractLayer
+      Description: Tesseract bin and libraries
+      ContentUri: ../../src/layers/tesseract-layer-x86_64.zip
+      CompatibleRuntimes:
+      - python3.12
+  PopplerLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: PopplerLayer
+      Description: Poppler bin and libraries
+      ContentUri: ../../src/layers/poppler-layer-x86_64.zip
+      CompatibleRuntimes:
+      - python3.12
+  Convert:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      MemorySize: 512
+      CodeUri: Convert
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: S3DataBucket
+          LD_LIBRARY_PATH: /opt/lib:/opt:lib64
+          PATH: /opt/bin
+          TESSDATA_PREFIX: /opt/tessdata
+          TABLE_NAME:
+            Ref: DocumentConversionJobsTable
+      Layers:
+      - Ref: TesseractLambdaLayer
+      - Ref: PopplerLambdaLayer
+    Metadata:
+      SamResourceId: Convert
+Outputs:
+  S3BucketName:
+    Description: Name of the S3 bucket
+    Value:
+      Ref: S3DataBucket
+  GenPresignedUrlArn:
+    Description: ARN of GenPresignedUrl Lambda function
+    Value:
+      Fn::GetAtt:
+      - GenPresignedUrl
+      - Arn
+  ConvertArn:
+    Description: ARN of Convert Lambda function
+    Value:
+      Fn::GetAtt:
+      - Convert
+      - Arn
+  QueryJobsArn:
+    Description: ARN of QueryJobs Lambda function
+    Value:
+      Fn::GetAtt:
+      - QueryJobs
+      - Arn
+  ApiGatewayUrl:
+    Description: API Gateway endpoint
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/

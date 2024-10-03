@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  # S3 Bucket Resource
+  S3DataBucket:
+    Type: AWS::S3::Bucket
+
+  # DynamoDB Table
+  DocumentConversionJobsTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: "DocumentConversionJobs"
+      AttributeDefinitions:
+        - AttributeName: "job_id"
+          AttributeType: "S"  # String type for Partition Key
+        - AttributeName: "created_at"
+          AttributeType: "S"  # String type for Sort Key
+      KeySchema:
+        - AttributeName: "job_id"
+          KeyType: "HASH"  # Partition Key
+        - AttributeName: "created_at"
+          KeyType: "RANGE"  # Sort Key
+      BillingMode: "PAY_PER_REQUEST"  # On-demand billing mode
+      Tags:
+        - Key: "Environment"
+          Value: "Production"
+        - Key: "Project"
+          Value: "DocumentConversion"
+
+  # First Lambda function (API Gateway integration)
+  GenPresignedUrl:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.12  # Adjust runtime as per your code
+      CodeUri: ./src/gen_presigned_url/  # Location of the Lambda code
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DocumentConversionJobsTable  # Pass DynamoDB table name to Lambda
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /job
+            Method: POST
+
+  # Second Lambda function (API Gateway integration)
+  QueryJobs:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      CodeUri: ./src/query_jobs/
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref DocumentConversionJobsTable
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /job
+            Method: GET
+
+  TesseractLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: TesseractLayer
+      Description: Tesseract bin and libraries
+      ContentUri: ./src/layers/tesseract-layer-x86_64.zip
+      CompatibleRuntimes:
+        - python3.12
+
+  PopplerLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: PopplerLayer
+      Description: Poppler bin and libraries
+      ContentUri: ./src/layers/poppler-layer-x86_64.zip
+      CompatibleRuntimes:
+        - python3.12
+
+  # Third Lambda function (Convert function with 512MB memory)
+  Convert:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      MemorySize: 512  # Set memory size to 512MB
+      CodeUri: ./src/convert/
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3DataBucket
+          LD_LIBRARY_PATH: "/opt/lib:/opt:lib64"
+          PATH: "/opt/bin"
+          TESSDATA_PREFIX: "/opt/tessdata"
+          TABLE_NAME: !Ref DocumentConversionJobsTable
+      Layers:
+        - !Ref TesseractLambdaLayer  # created above
+        - !Ref PopplerLambdaLayer  # created above
+
+Outputs:
+  S3BucketName:
+    Description: "Name of the S3 bucket"
+    Value: !Ref S3DataBucket
+
+  GenPresignedUrlArn:
+    Description: "ARN of GenPresignedUrl Lambda function"
+    Value: !GetAtt GenPresignedUrl.Arn
+
+  ConvertArn:
+    Description: "ARN of Convert Lambda function"
+    Value: !GetAtt Convert.Arn
+
+  QueryJobsArn:
+    Description: "ARN of QueryJobs Lambda function"
+    Value: !GetAtt QueryJobs.Arn
+
+  ApiGatewayUrl:
+    Description: "API Gateway endpoint"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
