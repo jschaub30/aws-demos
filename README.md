@@ -2,6 +2,8 @@
 
 AWS Serverless Application Model (SAM) template for Document Conversion
 
+![Project Logo](./src/webapp/diagram.png)
+
 ```sh
 sam build
 sam deploy --guided
