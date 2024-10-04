@@ -44,7 +44,7 @@ header nav ul li a:hover {
 
 /* Main content styling */
 main {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px;
     background-color: white;
@@ -111,9 +111,15 @@ button:hover {
     text-decoration: underline;
 }
 
+.project-info {
+    margin-top: 20px;
+    text-align: left;
+    padding-left: 10px;
+}
+
 /* Section styling */
 section {
-    max-width: 600px;
+    max-width: 900px;
     margin: 40px auto;
     padding: 20px;
     background-color: white;
@@ -146,4 +152,3 @@ section p {
         padding: 15px;
     }
 }
-
