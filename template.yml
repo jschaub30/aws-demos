@@ -56,6 +56,13 @@ Resources:
       NotificationConfiguration:
         EventBridgeConfiguration:
           EventBridgeEnabled: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteObjectsAfter48Hours
+            Status: Enabled
+            ExpirationInDays: 2
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 2
 
   # DynamoDB Table
   DocumentConversionJobsTable:
@@ -78,6 +85,9 @@ Resources:
           Value: "Production"
         - Key: "Project"
           Value: "DocumentConversion"
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
 
   # EventBridge Rule to trigger the Convert Lambda function
   S3UploadEventRule:

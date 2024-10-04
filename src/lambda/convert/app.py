@@ -4,21 +4,23 @@ Convert image and PDF files into text/structured text
 Requires tesseract and poppler lambda layers
 - see https://github.com/jschaub30/lambda-layers
 """
-import boto3
-import os
 import json
-import tempfile
+import os
 import logging
-from pathlib import Path
 import subprocess
+import tempfile
+import time
+from pathlib import Path
 from subprocess import TimeoutExpired, CalledProcessError
 from typing import Dict, Optional, Any
 from datetime import datetime
+import boto3
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME')
 TABLE = dynamodb.Table(table_name)
+TTL_DAYS = 30  # DynamoDB time-to-live
 
 s3 = boto3.client('s3')
 
@@ -245,20 +247,23 @@ def lambda_handler(event, context):
 def update_job(job_id, status, urls=None, message=None, metadata=None):
     try:
         item = {
-            'job_id': job_id,
-            'created_at': datetime.utcnow().isoformat(),
-            'status': status,
+            "job_id": job_id,
+            "created_at": datetime.utcnow().isoformat(),
+            "status": status,
+            "ttl": int(time.time()) + (TTL_DAYS * 24 * 60 * 60),
         }
 
-        if status == 'success' and urls:
-            item['urls'] = urls
+        if status == "success" and urls:
+            item["urls"] = urls
         elif message:
-            item['message'] = message
+            item["message"] = message
 
         if metadata:
-            item['metadata'] = metadata
+            item["metadata"] = metadata
 
-        response = TABLE.put_item(Item=item)
+        _ = TABLE.put_item(Item=item)
         logger.info(f"Job {job_id} with status={status!r} updated successfully")
     except ClientError as e:
-        logger.error(f"Error updating job record: {e.response['Error']['Message']}")
+        msg = f"Error updating job {job_id}: {e.response['Error']['Message']}"
+        logger.error(msg)
+        raise

@@ -65,12 +65,12 @@ async function checkJobStatus(jobId, elapsedTime) {
     const statusMessage = document.getElementById('statusMessage');
     const fileLinks = document.getElementById('fileLinks');
     const pollInterval = 5000; // Poll every 5 seconds
-    const maxPollingTime = 300000; // Maximum polling time of 5 minutes (300,000 ms)
+    const maxPollingTime = 120000; // Maximum polling time of 2 minutes (120,000 ms)
     const apiUrl = "API_GATEWAY_URL";
 
     // Stop polling if the elapsed time exceeds 5 minutes
     if (elapsedTime >= maxPollingTime) {
-        statusMessage.textContent = 'Polling stopped after 5 minutes. Please try again later.';
+        statusMessage.textContent = 'Polling stopped after 2 minutes. Please try again later.';
         return;
     }
 
@@ -83,7 +83,7 @@ async function checkJobStatus(jobId, elapsedTime) {
         const statusData = await statusResponse.json();
 
         if (statusData.status === 'success') {
-            statusMessage.textContent = 'Job completed successfully. Here are your files:';
+            statusMessage.textContent = 'Job completed successfully:';
 
             // Clear previous links
             fileLinks.innerHTML = '';
@@ -92,7 +92,11 @@ async function checkJobStatus(jobId, elapsedTime) {
             for (const [key, url] of Object.entries(statusData.urls)) {
                 const link = document.createElement('a');
                 link.href = url;
-                link.textContent = `${key.toUpperCase()} file`;
+                if (key.toUpperCase() == 'INPUT'){
+                    link.textContent = 'INPUT file';
+                } else {
+                    link.textContent = `${key.toUpperCase()} output`;
+                }
                 link.target = '_blank';
                 fileLinks.appendChild(link);
                 fileLinks.appendChild(document.createElement('br'));
