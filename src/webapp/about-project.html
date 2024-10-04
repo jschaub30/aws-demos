@@ -19,6 +19,33 @@
     <main>
         <h2>About this project</h2>
         <p>This is an open source, serverless version of a service I built at my previous job at <a href="https://www.statestreet.com/us/en/asset-manager" target="blank">State Street</a>, built on AWS.</p>
+
+        <!-- Added Image Section -->
+        <section>
+            <h3>Project Architecture</h3>
+            <p>Below is the architecture diagram of the document conversion service:</p>
+            <img src="diagram.png" alt="Architecture Diagram" style="width:100%; max-width:600px; display:block; margin: 0 auto;">
+        </section>
+
+        <!-- Added Workflow Section -->
+        <section>
+            <h3>Workflow</h3>
+	    <ol>
+		<li><strong>Upload File:</strong> The user selects a local file and presses the "Upload" button.</li>
+		<li><strong>Generate Presigned URL:</strong> The frontend makes a request to the <strong>GenPresignedUrl</strong> Lambda function.</li>
+		<li><strong>Upload to S3:</strong> The file is uploaded to the S3 bucket via the presigned URL.</li>
+		<li><strong>Trigger Lambda:</strong> Once the file is uploaded, an S3 event (via EventBridge) triggers the <strong>Convert</strong> Lambda function.</li>
+		<li><strong>Document Conversion:</strong>
+		    <ul>
+			<li>For image files, <a href="https://github.com/tesseract-ocr/tesseract" target="_blank">Tesseract</a> is used to create TXT, HTML, and PDF files.</li>
+			<li>For PDF input files, <a href="https://poppler.freedesktop.org/" target="_blank">Poppler</a> is used to create TXT and HTML files.</li>
+		    </ul>
+		</li>
+		<li><strong>Retrieve Results:</strong> The frontend periodically checks the status of the job, and once completed, the converted document links are provided to the user for download.</li>
+	    </ol>
+
+	    <p>The open source software was installed using Lambda Layers (see <a href="https://github.com/jschaub30/lambda-layers">this repo</a>).</p>
+        </section>
     </main>
 </body>
 </html>
