@@ -18,7 +18,17 @@
 
     <main>
         <h2>About this project</h2>
-        <p>This is an open source, serverless version of a service I built at my previous job at <a href="https://www.statestreet.com/us/en/asset-manager" target="blank">State Street</a>, built on AWS.</p>
+        <p>This is an open source, serverless version of an Optical Character Recognition (OCR) service I built at my previous job at <a href="https://www.statestreet.com/us/en/asset-manager" target="blank">State Street</a>, built on AWS.
+The previous document conversion service, as the name implies, converted many types of
+input documents (image files, pdfs, etc) into a structured XML format. The service was
+the first step in various machine learning/natural language processing (NLP) pipelines.
+It was effectively "OCR on steroids", somewhat comparable to
+<a href="https://aws.amazon.com/textract/" target="_blank">AWS Textract</a>.</p>
+
+	<p>The State Street version contained an API tier, a worker tier, and a database tier. For this
+	serverless implementation, I've replicated the previous service with 3 Lambda functions, a DynamoDB table,
+	API Gateway endpoints, and S3 for storage. See the
+	<a href="https://github.com/jschaub30/demo-convert-sam/blob/main/template.yml" target="_blank">SAM template file</a> for details.</p>
 
         <!-- Added Image Section -->
         <section>
