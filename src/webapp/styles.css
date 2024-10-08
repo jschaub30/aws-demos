@@ -132,6 +132,15 @@ button:hover {
     padding-left: 10px;
 }
 
+
+p {
+  padding-top: 10px;    /* Space inside the paragraph, before the text */
+}
+
+.ul-about {
+  padding-left: 20px;
+}
+
 /* Section styling */
 section {
     max-width: 900px;
