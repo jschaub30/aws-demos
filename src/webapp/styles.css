@@ -64,6 +64,12 @@ h1, h2 {
     gap: 10px;
 }
 
+/* Slider styling */
+.slider {
+    width: 200px;
+    margin: 10px 0;
+}
+
 /* Input and button styling */
 input[type="file"] {
     border: 1px solid #ccc;
@@ -84,6 +90,15 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+/* Centered container and button styling */
+.centered-container {
+    text-align: center;
+}
+
+.centered-button {
+    margin-top: 10px;
 }
 
 /* Status message */

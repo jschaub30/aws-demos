@@ -17,7 +17,7 @@ async function uploadFile() {
     try {
         // Call the Lambda function to get the presigned URL
         statusMessage.textContent = 'Getting presigned URL to upload file...';
-        const lambdaResponse = await fetch(`${apiUrl}`, {  // Use the environment variable
+        const lambdaResponse = await fetch(`${apiUrl}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ async function uploadFile() {
         });
 
         if (!lambdaResponse.ok) {
-            statusMessage.textContent = 'Failed to get presigned URL';
+            statusMessage.textContent = 'Failed to get presigned URL: ' + lambdaResponse.status + lambdaResponse.statusText;
             throw new Error('Failed to get presigned URL');
         }
 
@@ -118,5 +118,75 @@ async function checkJobStatus(jobId, elapsedTime) {
     } catch (error) {
         console.error('Error:', error);
         statusMessage.textContent = 'Error checking job status: ' + error.message;
+    }
+}
+
+function toggleFileChoice() {
+    const fileChoice = document.getElementById('fileChoice').value;
+    const choiceLabel = document.getElementById('choiceLabel');
+    const uploadSection = document.getElementById('uploadSection');
+    const existingFilesSection = document.getElementById('existingFilesSection');
+
+    if (fileChoice == "0") {
+        uploadSection.style.display = 'block';
+        existingFilesSection.style.display = 'none';
+    } else {
+        uploadSection.style.display = 'none';
+        existingFilesSection.style.display = 'block';
+    }
+}
+
+async function submitExistingFile() {
+    const statusMessage = document.getElementById('statusMessage');
+    const apiUrl = "https://bx3sac0sc7.execute-api.us-east-1.amazonaws.com/Prod/job";
+    const selectedFileInput = document.querySelector('input[name="existingFile"]:checked');
+    const fileLinks = document.getElementById('fileLinks');
+    fileLinks.textContent = "";
+
+    if (!selectedFileInput) {
+        statusMessage.textContent = 'Please select a file to submit.';
+        return;
+    }
+
+    statusMessage.textContent = 'Submitting existing file...';
+    const selectedFileUrl = selectedFileInput.value;
+
+    try {
+        // Call the Lambda function to submit the existing file URL
+        statusMessage.textContent = 'Submitting existing file URL...';
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                source_url: selectedFileUrl
+            })
+        });
+
+
+        if (!response.ok) {
+            console.log(response);
+            console.dir(response);
+            let responseBodyText = await response.text();
+            let responseBody = JSON.parse(responseBodyText);
+            let errorMessage = 'Failed to submit the file URL: ' +
+                'Status=' + response.status +
+                ', message=' + responseBody.message;
+
+            console.log(errorMessage);
+            statusMessage.textContent = errorMessage;
+            throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        const jobId = data.job_id;
+        statusMessage.textContent = 'File URL submitted successfully. Checking job status...';
+
+        // Start polling the job status
+        checkJobStatus(jobId, 0);
+    } catch (error) {
+        console.error('Error:', error);
+        statusMessage.textContent = 'Error submitting file URL: ' + error.message;
     }
 }

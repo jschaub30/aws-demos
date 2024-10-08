@@ -162,6 +162,7 @@ def process_file(bucket_name: str, object_key: str, job_id, config: Dict[str, An
     try:
         head_response = s3.head_object(Bucket=bucket_name, Key=object_key)
         content_type = head_response['ContentType']
+        logger.info(f"content_type={content_type}")
 
         # Check if the content type is allowed (image or PDF)
         if not (
@@ -209,9 +210,13 @@ def lambda_handler(event, context):
     logging.debug(os.listdir("/opt"))
     logging.debug(os.listdir("/opt/lib"))
     logging.debug(os.listdir("/opt/lib64"))
-    bucket_name = event['detail']['bucket']['name']
-    object_key = event['detail']['object']['key']
-    job_id = object_key.split("input/")[1].split("/")[0]
+    if 'bucket' in event['detail']:
+        bucket_name = event['detail']['bucket']['name']
+        object_key = event['detail']['object']['key']
+        job_id = object_key.split("input/")[1].split("/")[0]
+    else:
+        logging.info(json.dumps(event, indent=2))
+        raise Exception("Not Implemented")
     result = process_file(bucket_name, object_key, job_id, None)
     expiration_time_sec = 172800  # 2 days
     urls = {}

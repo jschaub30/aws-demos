@@ -20,10 +20,27 @@
         <h1>Demo Document Conversion Service</h1>
         <h3>Extract structured text from image/PDF files</h3>
         <div class="upload-container">
-            <input type="file" id="fileInput" />
-            <button onclick="uploadFile()">Upload*</button>
+            <div class="slider-container">
+                <span>Upload File</span>
+                <input type="range" id="fileChoice" min="0" max="1" value="0" class="slider" onchange="toggleFileChoice()">
+                <span>Choose Existing File</span>
+            </div>
+
+            <div id="uploadSection" class="centered-container">
+                <input type="file" id="fileInput" />
+                <button onclick="uploadFile()" class="centered-button">Upload*</button>
+            </div>
+
+            <div id="existingFilesSection" class="centered-container" style="display: none;">
+                <h4>Choose an existing file:</h4>
+                <div><input type="radio" name="existingFile" value="https://jschaub30-public.s3.amazonaws.com/Jeremy_profile.pdf"> Jeremy_profile.pdf
+                      (<a href="https://jschaub30-public.s3.amazonaws.com/Jeremy_profile.pdf" target="_blank">link</a>)</div>
+                 <div><input type="radio" name="existingFile" value="https://jschaub30-public.s3.amazonaws.com/Jeremy_profile.png"> Jeremy_profile.png
+                     (<a href="https://jschaub30-public.s3.amazonaws.com/Jeremy_profile.png">link</a>)</div>
+                <button onclick="submitExistingFile()">Submit</button>
+            </div>
         </div>
-	<p><em>*All data will be deleted after 48 hours</em></p>
+        <p><em>*All data will be deleted after 48 hours</em></p>
 
         <div id="statusMessage" class="status-message"></div>
         <div id="fileLinks" class="file-links"></div>

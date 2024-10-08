@@ -30,9 +30,12 @@
         <section>
             <h3>Workflow</h3>
 	    <ol>
-		<li><strong>Upload File:</strong> The user selects a local file and presses the "Upload" button.</li>
-		<li><strong>Generate Presigned URL:</strong> The frontend makes a request to the <a href="https://github.com/jschaub30/demo-convert-sam/blob/main/src/lambda/gen_presigned_url/app.py" target="_blank"><strong>GenPresignedUrl</strong> Lambda function</a>.</li>
-		<li><strong>Upload to S3:</strong> The file is uploaded to the S3 bucket via the presigned URL.</li>
+		<li><strong>Select Input:</strong> The user selects a local file or selects an existing file.</li>
+		<li><strong>Start Job:</strong> The frontend makes a request to the <a href="https://github.com/jschaub30/demo-convert-sam/blob/main/src/lambda/start_job/app.py" target="_blank"><strong>StartJob</strong> Lambda function</a>.</li>
+		<ul>
+			<li>For a local file upload, the client uploads the local file to the S3 bucket via the presigned URL.</li>
+			<li>For an existing file, the backend downloads the source and uploads the file to the S3 bucket.</li>
+		</ul>
 		<li><strong>Trigger Lambda:</strong> Once the file is uploaded, an S3 event (via EventBridge) triggers the <a href="https://github.com/jschaub30/demo-convert-sam/blob/main/src/lambda/convert/app.py" target="_blank"><strong>Convert</strong> Lambda function.</a></li>
 		<li><strong>Document Conversion:</strong>
 		    <ul>

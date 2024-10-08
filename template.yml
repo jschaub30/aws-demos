@@ -121,12 +121,12 @@ Resources:
         AllowOrigin: "'*'"
 
   # First Lambda function (API Gateway integration)
-  GenPresignedUrl:
+  StartJobUrl:
     Type: AWS::Serverless::Function
     Properties:
       Handler: app.lambda_handler
       Runtime: python3.12
-      CodeUri: ./src/lambda/gen_presigned_url/
+      CodeUri: ./src/lambda/start_job/
       Timeout: 10
       Environment:
         Variables:
@@ -245,9 +245,9 @@ Outputs:
     Description: "Name of the S3 bucket"
     Value: !Ref S3DataBucket
 
-  GenPresignedUrlArn:
-    Description: "ARN of GenPresignedUrl Lambda function"
-    Value: !GetAtt GenPresignedUrl.Arn
+  StartJobUrlArn:
+    Description: "ARN of StartJobUrl Lambda function"
+    Value: !GetAtt StartJobUrl.Arn
 
   ConvertArn:
     Description: "ARN of Convert Lambda function"
