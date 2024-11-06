@@ -28,7 +28,7 @@ It was effectively "OCR on steroids", somewhat comparable to
 	<p>The State Street version contained an API tier, a worker tier, and a database tier. For this
 	serverless implementation, I've replicated the previous service with 3 Lambda functions, a DynamoDB table,
 	API Gateway endpoints, and S3 for storage. See the
-	<a href="https://github.com/jschaub30/demo-convert-sam/blob/main/template.yml" target="_blank">SAM template file</a> for details.</p>
+	<a href="https://github.com/jschaub30/aws-demos/convert-sam/blob/main/template.yml" target="_blank">SAM template file</a> for details.</p>
 
         <!-- Added Image Section -->
         <section>
@@ -41,12 +41,12 @@ It was effectively "OCR on steroids", somewhat comparable to
             <h3>Workflow</h3>
 	    <ol>
 		<li><strong>Select Input:</strong> The user selects a local file or selects an existing file.</li>
-		<li><strong>Start Job:</strong> The frontend makes a request to the <a href="https://github.com/jschaub30/demo-convert-sam/blob/main/src/lambda/start_job/app.py" target="_blank"><strong>StartJob</strong> Lambda function</a>.</li>
+		<li><strong>Start Job:</strong> The frontend makes a request to the <a href="https://github.com/jschaub30/aws-demos/convert-sam/blob/main/src/lambda/start_job/app.py" target="_blank"><strong>StartJob</strong> Lambda function</a>.</li>
 		<ul>
 			<li>For a local file upload, the client uploads the local file to the S3 bucket via the presigned URL.</li>
 			<li>For an existing file, the backend downloads the source and uploads the file to the S3 bucket.</li>
 		</ul>
-		<li><strong>Trigger Lambda:</strong> Once the file is uploaded, an S3 event (via EventBridge) triggers the <a href="https://github.com/jschaub30/demo-convert-sam/blob/main/src/lambda/convert/app.py" target="_blank"><strong>Convert</strong> Lambda function.</a></li>
+		<li><strong>Trigger Lambda:</strong> Once the file is uploaded, an S3 event (via EventBridge) triggers the <a href="https://github.com/jschaub30/aws-demos/convert-sam/blob/main/src/lambda/convert/app.py" target="_blank"><strong>Convert</strong> Lambda function.</a></li>
 		<li><strong>Document Conversion:</strong>
 		    <ul>
 			<li>For image files, <a href="https://github.com/tesseract-ocr/tesseract" target="_blank">Tesseract</a> is used to create TXT, HTML, and PDF files.</li>
@@ -60,7 +60,7 @@ It was effectively "OCR on steroids", somewhat comparable to
     </section>
     <div class="project-info">
         <p>The open source software was installed using Lambda Layers (see <a href="https://github.com/jschaub30/lambda-layers">this repo</a>).</p>
-        <p>Deploy this yourself (see <a href="https://github.com/jschaub30/demo-convert-sam">this repo</a>).</p>
+        <p>Deploy this yourself (see <a href="https://github.com/jschaub30/aws-demos/convert-sam">this repo</a>).</p>
     </div>
     </main>
 </body>
