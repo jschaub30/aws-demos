@@ -18,8 +18,8 @@ Knowledge Bases used:
 
 ## Setup
 ### Requesting model access
-1. Request access to foundational model ()
-2. *Important* request access to embeddings model (amazon.titan-embed-text-v2:0)
+1. Request access to foundational model (`anthropic.claude-3-5-sonnet-20241022-v2:0`)
+2. *Important* request access to embeddings model (`amazon.titan-embed-text-v2:0`)
 
 ### Creating the knowledge base
 1. Select input document(s)
