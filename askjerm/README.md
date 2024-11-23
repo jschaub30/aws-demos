@@ -8,7 +8,7 @@ bases that have been ingested and stored in a vector database. The "augmented" q
 then sent to the [Anthropic Claude v2][Claude] foundational model.
 
 Knowledge Bases used:
-- [The text of my resume](data/data/Schaub_CV_2024-11-full.txt) uploaded to an S3 bucket
+- [The text of my resume](data/Schaub_CV_2024-11-full.txt) uploaded to an S3 bucket
 - [My  website](https://jeremyschaub.us/about.html) using a web crawler
 - some papers and publications that I have written (TODO)
 
