@@ -9,7 +9,7 @@ then sent to the [Anthropic Claude v2][Claude] foundational model.
 
 Knowledge Bases used:
 - [The text of my resume](data/Schaub_CV_2024-11-full.txt) uploaded to an S3 bucket
-- [My  website](https://jeremyschaub.us/about.html) using a web crawler
+- [The content of my website](https://jeremyschaub.us/) using a web crawler
 - some papers and publications that I have written (TODO)
 
 ## Code
@@ -22,17 +22,25 @@ Knowledge Bases used:
 2. *Important* request access to embeddings model (`amazon.titan-embed-text-v2:0`)
 
 ### Creating the knowledge base
-1. Select input document(s)
-2. Create an S3 bucket
-3. Upload the input document(s)
-4. In Amazon Bedrock -> Knowledge Bases, create a knowledge base from the S3 bucket with default settings
-5. Sync the knowledge base (make sure you have requested access to both the foundational model and the embeddings model)
+1. Create an S3 bucket and upload the input document(s)
+2. From the [AWS Bedrock console][Console] -> Knowledge Bases, create a knowledge base from the S3 bucket with default settings
+3. Sync the knowledge base (make sure you have requested access to both the foundational model and the embeddings model)
 
-After completing these steps, you can use the Bedrock Knowledge Base console
-to select the foundational model, and ask a question that can only be answered from
-the knowledge base:
-![Console test](img/bedrock_test.png)
+## Testing the Knowledge bases
+After creating and syncing the knowledge bases, I asked questions that can only
+be answered using the knowledge bases.
+
+For example, my education level is listed in the text of my resume:
+
+![Resume test](img/bedrock_test.png)
+
+To test the web crawler, I asked a question about a [disaster recovery blog post][DR]
+from my site.
+
+![Web crawler test](img/bedrock_dr_test.png)
 
 [Bedrock]: https://aws.amazon.com/bedrock/
 [RAG]: https://aws.amazon.com/what-is/retrieval-augmented-generation/
 [Claude]: https://www.anthropic.com/news/claude-2
+[Console]: https://console.aws.amazon.com/bedrock/
+[DR]: https://jeremyschaub.us/posts/post013-issi-dr/index.html
