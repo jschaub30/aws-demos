@@ -24,7 +24,8 @@ AWS_REGION = config.get("AWS_REGION")
 AGENT_ID = config.get("AGENT_ID")
 ALIAS_ID = config.get("ALIAS_ID")
 
-client = boto3.client("bedrock-agent-runtime", region_name=AWS_REGION)
+# client = boto3.client("bedrock-agent-runtime", region_name=AWS_REGION)
+client = boto3.client("bedrock-agent-runtime")
 
 user_query = "Who is Jeremy?"
 # user_query = "Who are you?"
