@@ -1,7 +1,7 @@
 # Serverless Application Model (SAM) template for AskJerm
 
 Currently, [this template](template.yml) only contains the API Gateway endpoint
-and [this Lambda function](src/invoke_agent/app.yml) to invoke the agent.
+and [this Lambda function](src/invoke_agent/app.py) to invoke the agent.
 
 ## Deploy
 ```sh

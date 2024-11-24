@@ -61,7 +61,7 @@ from my site.
 [RAG]: https://aws.amazon.com/what-is/retrieval-augmented-generation/
 [Claude]: https://www.anthropic.com/news/claude-2
 [website]: https://jeremyschaub.us/
-[lambda]: sam/invoke_agent/app.py
+[lambda]: sam/src/invoke_agent/app.py
 [gateway]: https://aws.amazon.com/api-gateway/
 [SAM]: sam/README.md
 [Console]: https://console.aws.amazon.com/bedrock/
