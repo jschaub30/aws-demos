@@ -14,6 +14,7 @@ Knowledge Bases used:
 
 ## Code
 - [simple conversing with foundational model](src/simple_converse.py) (No knowledge bases)
+- [simple invoking an agent](src/simple_agent.py)
 
 
 ## Setup
