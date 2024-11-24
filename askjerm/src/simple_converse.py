@@ -10,7 +10,7 @@ SYSTEM_PROMPT = """
 Your name is Jeremy.
 You are applying for jobs.
 """
-
+import sys
 import boto3
 from botocore.exceptions import ClientError
 
@@ -18,6 +18,8 @@ def converse(user_message):
     """converse script"""
 
     client = boto3.client("bedrock-runtime", region_name=AWS_REGION)
+    print(dir(client))
+    sys.exit()
 
     conversation = [
         {
