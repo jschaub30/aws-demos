@@ -25,20 +25,32 @@ Here are the steps to setup the agent:
 3. Create Lambda function to invoke agent (deployed via [SAM template][SAM])
 4. Create API Gateway endpoint to invoke Lambda function (deployed via [SAM template][SAM])
 
-## Creating the agent
+## Cost warning
+The default configuration described below results in a cost of approximately $6/day,
+primarily from the [Amazon Opensearch Serverless][opensearch] collection in
+non-redundant mode. This collection charges 0.5 (ingestion) + 0.5 (search)
+OpenSearch Compute Units (OCUs) per day, charged at $0.24/hour.
 
-### Request model access
+More details [here][os-pricing].
+
+### Creating the agent
+
+#### Request model access
 1. Request access to foundational model (`anthropic.claude-3-5-sonnet-20241022-v2:0`)
 2. *Important* request access to embeddings model (`amazon.titan-embed-text-v2:0`)
 
-### Create the knowledge base
+#### Create the knowledge base
 1. Create an S3 bucket and upload the input document(s)
 2. From the [AWS Bedrock console][Console] -> Knowledge Bases, create a knowledge base
 3. Add a data source from the S3 bucket with default settings
+  - Default chunking strategy
+  - Titan Text Embeddings v2 model (the model we requested access to previously)
+  - Quick create vector database. This creates an [Amazon Opensearch Serverless][opensearch]
+vector store, with no redundancy. This is [*costly*](#Cost warning).
 4. Add a data source using a web crawler pointing to [my website][website]
 5. Sync the data sources (make sure you have requested access to both the foundational model and the embeddings model)
 
-## Testing the Knowledge bases
+#### Testing the Knowledge bases
 After creating the knowledge base and syncing the data sources, I tested the model via
 the knowledge base console.
 
@@ -66,3 +78,5 @@ from my site.
 [SAM]: sam/README.md
 [Console]: https://console.aws.amazon.com/bedrock/
 [DR]: https://jeremyschaub.us/posts/post013-issi-dr/index.html
+[opensearch]: https://aws.amazon.com/opensearch-service/features/serverless/
+[os-pricing]: https://aws.amazon.com/opensearch-service/pricing/
