@@ -46,7 +46,7 @@ More details [here][os-pricing].
   - Default chunking strategy
   - Titan Text Embeddings v2 model (the model we requested access to previously)
   - Quick create vector database. This creates an [Amazon Opensearch Serverless][opensearch]
-vector store, with no redundancy. This is [*costly*](#Cost warning).
+vector store, with no redundancy. This is [*costly*](#cost-warning).
 4. Add a data source using a web crawler pointing to [my website][website]
 5. Sync the data sources (make sure you have requested access to both the foundational model and the embeddings model)
 
