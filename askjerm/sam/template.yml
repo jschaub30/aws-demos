@@ -13,7 +13,6 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          MODEL_ID: !Ref ModelId
           AGENT_ID: !Ref AgentId
           ALIAS_ID: !Ref AliasId
 
@@ -52,9 +51,6 @@ Outputs:
       Name: ApiUrl
 
 Parameters:
-  ModelId:
-    Type: String
-    Description: "ID of the Foundational model (e.g. anthropic.claude-3-5-haiku-20241022-v1:0)"
   AgentId:
     Type: String
     Description: "Bedrock Agent ID"

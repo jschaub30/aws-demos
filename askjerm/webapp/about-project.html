@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About This Project</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="https://jeremyschaub.us/">Home</a></li>
+		<li><a href="index.html">Ask Jerm Demo</a></li>
+                <li><a href="about-me.html">About me</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>About this project</h2>
+        <p>
+	AskJerm is a Generative AI implementation using
+	<a href="https://aws.amazon.com/bedrock/" target="_blank">AWS Bedrock</a>.
+	The AskJerm agent invokes a
+	<a href="https://aws.amazon.com/what-is/retrieval-augmented-generation/" target="_blank">
+		"RAG (Response-Augmented Generation)
+	</a> pipeline to combine queries with knowledge bases that have been ingested and stored
+	in a vector database. The "augmented" query is then sent to the
+	<a href="https://www.anthropic.com/news/claude-2" target="_blank">
+		Anthropic Claude v2
+	</a> foundational model.
+
+        <p>See the <a href="https://github.com/jschaub30/aws-demos/tree/main/askjerm">AskJerm repo</a> for more details</p>
+
+    </main>
+</body>
+</html>

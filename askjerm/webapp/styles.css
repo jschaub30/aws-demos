@@ -1,0 +1,174 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    /* padding: 20px; */
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* Header styling */
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 15px 0;
+    margin-bottom: 20px;
+}
+
+header nav ul {
+    list-style-type: none;
+    text-align: center;
+}
+
+header nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Main content styling */
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Slider styling */
+.slider {
+    width: 200px;
+    margin: 10px 0;
+}
+
+/* Input and button styling */
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Centered container and button styling */
+.centered-container {
+    text-align: center;
+}
+
+.centered-button {
+    margin-top: 10px;
+}
+
+/* Status message */
+.status-message {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+}
+
+.project-info {
+    margin-top: 20px;
+    text-align: left;
+    padding-left: 10px;
+}
+
+
+p {
+  padding-top: 10px;    /* Space inside the paragraph, before the text */
+}
+
+.ul-about {
+  padding-left: 20px;
+}
+
+#userQuestion {
+    width: 440px;
+    height: 40px;
+}
+
+#askButton {
+    height: 40px;
+}
+
+.user-question {
+    font-weight: bold;
+}
+
+.bot-response {
+    color: green;
+    font-style: italic;
+}
+
+/* Section styling */
+section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+section p {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    header nav ul li {
+        display: block;
+        margin: 10px 0;
+    }
+
+    header nav ul li a {
+        font-size: 18px;
+    }
+
+    main, section {
+        padding: 15px;
+    }
+}

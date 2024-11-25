@@ -9,7 +9,6 @@ import boto3
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-MODEL_ID = os.environ.get("MODEL_ID")
 AGENT_ID = os.environ.get("AGENT_ID")
 ALIAS_ID = os.environ.get("ALIAS_ID")
 
