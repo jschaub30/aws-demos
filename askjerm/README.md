@@ -16,7 +16,7 @@ Knowledge Bases used:
 1. [AWS Bedrock][Bedrock] Agent.
 2. [AWS Lambda function][lambda] that invokes the agent.
 3. [API Gateway endpoint][gateway] to invoke the lambda function
-4. Web client to call the endpoint (TODO)
+4. [Web client](webapp) to call the endpoint
 
 ## Setup
 Here are the steps to setup the agent:
