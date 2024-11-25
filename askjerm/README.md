@@ -18,6 +18,11 @@ Knowledge Bases used:
 3. [API Gateway endpoint][gateway] to invoke the lambda function
 4. [Web client](webapp) to call the endpoint
 
+## Code
+- [simple script to converse with foundational model](src/simple_converse.py) (No knowledge bases)
+- [simple script to invoke the agent](src/simple_agent.py)
+- [lambda function to invoke the agent][lambda]
+
 ## Setup
 Here are the steps to setup the agent:
 1. Create knowledge bases (created manually via the AWS Console)
@@ -62,11 +67,6 @@ To test the web crawler, I asked a question about a [disaster recovery blog post
 from my site.
 
 ![Web crawler test](img/bedrock_dr_test.png)
-
-## Code
-- [simple conversing with foundational model](src/simple_converse.py) (No knowledge bases)
-- [simple script to invoke the agent](src/simple_agent.py)
-- [lambda function to invoke the agent][lambda]
 
 
 [Bedrock]: https://aws.amazon.com/bedrock/
