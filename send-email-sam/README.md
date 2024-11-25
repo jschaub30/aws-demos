@@ -6,7 +6,7 @@ API Gateway endpoint with a Lambda function that invokes the Simple Email Servic
 SES must be setup manually with a verified email for the Lambda function to work
 correctly. Edit `samconfig.toml` and add this email as the `DeliverToEmail`.
 
-In the [lambda function][src/send_to_ses/app.py], the email source and destination are
+In the [lambda function](src/send_to_ses/app.py), the email source and destination are
 set to this same verified email address.
 
 ```sh
