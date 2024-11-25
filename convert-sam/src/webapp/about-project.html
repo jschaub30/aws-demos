@@ -11,7 +11,7 @@
         <nav>
             <ul>
                 <li><a href="index.html">Demo</a></li>
-                <li><a href="about-me.html">About me</a></li>
+                <li><a href="https://jeremyschaub.us/about.html">About me</a></li>
             </ul>
         </nav>
     </header>
@@ -42,7 +42,7 @@ It was effectively "OCR on steroids", somewhat comparable to
 	    <ol>
 		<li><strong>Select Input:</strong> The user selects a local file or selects an existing file.</li>
 		<li><strong>Start Job:</strong> The frontend makes a request to the
-			<a href="https://github.com/jschaub30/aws-demos/blob/main/convert-sam/src/lambda/convert/app.py" target="_blank"><strong>StartJob</strong> Lambda function</a>.</li>
+			<a href="https://github.com/jschaub30/aws-demos/blob/main/convert-sam/src/lambda/start_job/app.py" target="_blank"><strong>StartJob</strong> Lambda function</a>.</li>
 		<ul>
 			<li>For a local file upload, the client uploads the local file to the S3 bucket via the presigned URL.</li>
 			<li>For an existing file, the backend downloads the source and uploads the file to the S3 bucket.</li>
@@ -54,14 +54,16 @@ It was effectively "OCR on steroids", somewhat comparable to
 			<li>For PDF input files, <a href="https://poppler.freedesktop.org/" target="_blank">Poppler</a> is used to create TXT and HTML files.</li>
 		    </ul>
 		</li>
-		<li><strong>Retrieve Results:</strong> The frontend periodically checks the status of the job, and once completed, the converted document links are provided to the user for download.</li>
+		<li><strong>Retrieve Results:</strong> The frontend periodically checks the status of the job via the
+            <a href="https://github.com/jschaub30/aws-demos/blob/main/convert-sam/src/lambda/query_jobs/app.py" target="_blank">QueryJob</a>
+            lambda function.  Once completed, the converted document links are provided to the user for download.</li>
 	    </ol>
 
         <!-- Left-Justified and Moved Down -->
     </section>
     <div class="project-info">
-        <p>The open source software was installed using Lambda Layers (see <a href="https://github.com/jschaub30/lambda-layers">this repo</a>).</p>
-        <p>Deploy this yourself (see <a href="https://github.com/jschaub30/aws-demos/tree/main/convert-sam">this repo</a>).</p>
+        <p>The open source software was installed using Lambda Layers (see <a href="https://github.com/jschaub30/lambda-layers" target="_blank">this repo</a>).</p>
+        <p>Deploy this yourself (see <a href="https://github.com/jschaub30/aws-demos/tree/main/convert-sam" target="_blank">this repo</a>).</p>
     </div>
     </main>
 </body>
