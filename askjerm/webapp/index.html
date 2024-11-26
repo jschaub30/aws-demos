@@ -18,6 +18,12 @@
     </header>
 
     <main>
+        <section class="status-message">
+		<p>This app costs about $6/day to operate, so I have disabled it for
+                now. I'm building a version that can be deployed quickly using the
+                AWS CDK. Check https://github.com/jschaub30/aws-demos/tree/main/askjerm
+		for the latest updates.</p>
+	</section>
         <h1>Interview my AI Agent!</h1>
         <h3>Example questions</h3>
         <ul>
@@ -40,6 +46,9 @@
     </main>
 
     <script>
+	window.onload = () => {
+            alert(
+        };
         const url = 'https://pxpb9zdmgj.execute-api.us-west-2.amazonaws.com/prod/ask';
 
         document.getElementById('askButton').addEventListener('click', async () => {

@@ -102,6 +102,7 @@ button:hover {
     text-align: center;
     font-size: 18px;
     color: #333;
+    background-color: pink;
 }
 
 .project-info {
