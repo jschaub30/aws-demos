@@ -3,10 +3,10 @@ import os
 
 import aws_cdk as cdk
 
-from cdk.cdk_stack import CdkStack
+from askjerm_cdk.askjerm_cdk_stack import AskJermCdkStack
 
 app = cdk.App()
-CdkStack(
+AskJermCdkStack(
     app,
     "AskJermCdkStack",
     env=cdk.Environment(
