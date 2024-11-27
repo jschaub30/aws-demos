@@ -1,4 +1,4 @@
-from aws_cdk import CfnOutput, Duration, Stack
+from aws_cdk import CfnOutput, Duration, RemovalPolicy, Stack
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_s3 as s3
 from aws_cdk.aws_iam import PolicyStatement
@@ -23,7 +23,12 @@ class AskJermCdkStack(Stack):
             instruction=kb_prompt,
         )
 
-        bucket = s3.Bucket(self, "ask-jerm")
+        bucket = s3.Bucket(
+            self,
+            "ask-jerm",
+            removal_policy=RemovalPolicy.DESTROY,
+            auto_delete_objects=True,
+        )
 
         BucketDeployment(
             self,
