@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Jerm Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="https://jeremyschaub.us/">Home</a></li>
+                <li><a href="https://github.com/jschaub30/aws-demos/tree/main/askjerm">About this project</a></li>
+                <li><a href="https://jeremyschaub.us/about.html">About me</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="status-message">
+		<p>This app costs about $6/day to operate, so I have disabled it for
+                now. I'm building a version that can be deployed quickly using the
+                AWS CDK. Check https://github.com/jschaub30/aws-demos/tree/main/askjerm
+		for the latest updates.</p>
+	</section>
+        <h1>Interview my AI Agent!</h1>
+        <h3>Example questions</h3>
+        <ul>
+            <li>Who are you?</li>
+            <li>Who is Jeremy?</li>
+            <li>Tell me details about your time at State Street</li>
+        </ul>
+
+        <!-- Input area for user questions -->
+        <section id="chat">
+            <label for="userQuestion">Ask Jerm:</label>
+            <input type="text" id="userQuestion" placeholder="Type your question here..." />
+            <button id="askButton">Ask</button>
+
+            <div id="conversationHistory">
+                <h3>Conversation History</h3>
+                <ul id="chatHistory"></ul>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const url = 'LAMBDA_URL_PLACEHOLDER';
+
+        document.getElementById('askButton').addEventListener('click', async () => {
+            const userQuestion = document.getElementById('userQuestion').value;
+            if (!userQuestion) {
+                alert("Please enter a question!");
+                return;
+            }
+
+            // Append user's question to the chat history
+            const chatHistory = document.getElementById('chatHistory');
+            const userQuestionElement = document.createElement('li');
+            userQuestionElement.innerHTML = `<strong>You:</strong> ${userQuestion}`;
+            userQuestionElement.className = 'user-question'; // Add class for user questions
+            userQuestionElement.innerHTML = `<strong>You:</strong> ${userQuestion}`;
+
+            chatHistory.appendChild(userQuestionElement);
+
+            // Send the question to the API
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ inputText: userQuestion })
+                });
+
+                // const data = await response.json();
+                // const botResponse = data.response || "Sorry, I couldn't understand that.";
+                const botResponse = await response.text();
+                const formattedResponse = botResponse.replace(/\n/g, '<br>');
+
+                // Append AI's response to the chat history
+                const botResponseElement = document.createElement('li');
+                botResponseElement.className = 'bot-response'; // Add class for bot responses
+                botResponseElement.innerHTML = `<strong>Jerm:</strong> ${formattedResponse}`;
+                chatHistory.appendChild(botResponseElement);
+
+                // Clear the input field
+                document.getElementById('userQuestion').value = '';
+            } catch (error) {
+                console.error("Error:", error);
+                const errorElement = document.createElement('li');
+                errorElement.innerHTML = `<strong>Jerm:</strong> An error occurred. Please try again later.`;
+                chatHistory.appendChild(errorElement);
+            }
+        });
+    </script>
+</body>
+</html>

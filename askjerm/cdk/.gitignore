@@ -1,3 +1,4 @@
+src/webapp/index.html
 *.swp
 package-lock.json
 __pycache__

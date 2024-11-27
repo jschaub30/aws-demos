@@ -1,5 +1,19 @@
 # Create and deploy the AskJerm agent via the AWS python cdk
 
+This repo creates 2 related stacks via the AWS python cdk
+- AskJermCdkStack: bedrock knowledge base/data source/agent and lambda function to invoke the agent
+- StaticWebsiteStack: web client to invoke the lambda function
+
+## Deploy
+Do not deploy both stacks at once using `cdk deploy --all`, because the static website
+must use the Lambda function URL created from the AskJermCdkStack.
+
+
+```sh
+cdk deploy AskJermCdkStack  # wait for this to complete
+cdk deploy StaticWebsiteStack  # the lambda function URL will be updated dynamically
+```
+
 ## Sources:
 - [AWS Labs GenAI CDK](https://github.com/awslabs/generative-ai-cdk-constructs/tree/main/src/cdk-lib/bedrock)
 

@@ -7,8 +7,6 @@ def test_s3_retention():
     app = core.App()
     stack = AskJermCdkStack(app, "cdk")
     template = assertions.Template.from_stack(stack)
-    print(dir(template))
-    print(template)
 
     template.has_resource_properties("AWS::S3::Bucket", {"DeletionPolicy": "Delete"})
 
