@@ -65,14 +65,21 @@ class AskJermCdkStack(Stack):
             destination_bucket=bucket,
         )
 
-        bedrock.S3DataSource(
-            self,
-            "DataSource",
-            bucket=bucket,
-            knowledge_base=kb,
-            data_source_name="askjerm",
-            chunking_strategy=bedrock.ChunkingStrategy.FIXED_SIZE,
-        )
+        if True:
+            kb.add_s3_data_source(
+                bucket=bucket,
+                chunking_strategy=bedrock.ChunkingStrategy.SEMANTIC,
+                data_source_name="Jerm_documents",
+            )
+        else:
+            bedrock.S3DataSource(
+                self,
+                "DataSource",
+                bucket=bucket,
+                knowledge_base=kb,
+                data_source_name="askjerm",
+                chunking_strategy=bedrock.ChunkingStrategy.SEMANTIC,
+            )
 
         agent_prompt = (
             "You are a helpful and friendly agent named Jerm."

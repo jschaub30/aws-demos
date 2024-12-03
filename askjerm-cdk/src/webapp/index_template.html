@@ -90,7 +90,7 @@
             } catch (error) {
                 console.error("Error:", error);
                 const errorElement = document.createElement('li');
-                errorElement.innerHTML = `<strong>Jerm:</strong> An error occurred. Please try again later.`;
+                errorElement.innerHTML = `<strong>Jerm:</strong> An error occurred. Check the console for details.`;
                 chatHistory.appendChild(errorElement);
             }
         });
