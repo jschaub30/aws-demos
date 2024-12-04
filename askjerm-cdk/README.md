@@ -9,7 +9,7 @@ with knowledge bases that have been ingested and stored in a vector database. Th
 
 Knowledge Bases used:
 - [The text of my resume][cv]
-- [The content of my website][website] using a web crawler (TODO)
+- [The content of my website][website] using a web crawler
 
 I originally built this using a combination of the AWS Console and some serverless application
 model (SAM) scripts, but I then converted it to the [AWS CDK][cdk] so that the manual steps
@@ -23,7 +23,9 @@ OpenSearch Compute Units (OCUs) per day, charged at $0.24/hour.
 
 More details [here][os-pricing].
 
-## Request model access
+## Prerequisites
+
+### Request model access
 Before attempting to deploy these stacks, [request access to][model-access]
 1. foundational model (`Claude 3.5 Haiku`)
 2. embeddings model (`Titan Text Embeddings V2`)
@@ -32,7 +34,7 @@ Before attempting to deploy these stacks, [request access to][model-access]
 ### Install the AWS CDK
 See [instructions here][cdk-install].
 
-## Create and deploy the AskJerm agent via the AWS python cdk
+## Create and deploy
 This repo creates 2 related stacks via the AWS python cdk:
 - AskJermCdkStack: bedrock knowledge base/data source/agent and lambda function to invoke the agent
 - StaticWebsiteStack: web client to invoke the lambda function
@@ -45,25 +47,33 @@ Code:
 Do **not** deploy both stacks at once using `cdk deploy --all`, because the static website
 must use the Lambda function URL created from the AskJermCdkStack.
 
+### Step 1: Deploy Agent stack
 ```sh
 cdk deploy AskJermCdkStack  # wait for this to complete (about 8 minutes)
+cdk deploy StaticWebsiteStack  # the lambda function URL will be updated dynamically
+```
+
+### Step 2: Manual sync of data sources
+I cannot find a method to sync the data sources used in the Knowledge Base via the AWS
+CDK. So for now, you must open the [Bedrock console][console], click on the created
+Knowledge Base, then manually sync the 2 data sources.
+
+### Step 3: Deploy the website
+
+```sh
 cdk deploy StaticWebsiteStack  # the lambda function URL will be updated dynamically
 ```
 
 After deployment, you can invoke the agent via the static website URL that is printed
 when the StaticWebsiteStack finishes deploying.
 
-However, the agent doesn't work right away, and I'm still debugging why. I typically
-need to sync the data source in the created Knowledge Base via the
-[Bedrock console][console], then run some manual tests until it's all working.
-
-### Destroy
+## Rollback / remove stacks
 ```sh
 cdk destroy --all
 ```
 
 ## Sources:
-- [AWS Labs GenAI CDK](https://github.com/awslabs/generative-ai-cdk-constructs/tree/main/src/cdk-lib/bedrock)
+- [AWS Labs GenAI CDK][genai-cdk]
 
 [Bedrock]: https://aws.amazon.com/bedrock/
 [cdk]: https://docs.aws.amazon.com/cdk/v2/guide/home.html
@@ -71,6 +81,7 @@ cdk destroy --all
 [Claude]: https://www.anthropic.com/claude/haiku
 [console]: https://console.aws.amazon.com/bedrock/
 [cv]: documents/Schaub_CV_2024-11-full.txt
+[genai-cdk]: https://github.com/awslabs/generative-ai-cdk-constructs/tree/main/src/cdk-lib/bedrock
 [lambda]: src/lambda.py
 [model-access]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html
 [opensearch]: https://aws.amazon.com/opensearch-service/features/serverless/

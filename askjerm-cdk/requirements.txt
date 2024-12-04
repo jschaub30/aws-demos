@@ -1,4 +1,5 @@
 aws-cdk-lib==2.171.0
+boto3
+botocore
 constructs>=10.0.0,<11.0.0
 cdklabs.generative-ai-cdk-constructs
-boto3
