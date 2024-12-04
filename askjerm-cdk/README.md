@@ -28,8 +28,11 @@ Before attempting to deploy these stacks, [request access to][model-access]
 1. foundational model (`Claude 3.5 Haiku`)
 2. embeddings model (`Titan Text Embeddings V2`)
 
-## Create and deploy the AskJerm agent via the AWS python cdk
 
+### Install the AWS CDK
+See [instructions here][cdk-install].
+
+## Create and deploy the AskJerm agent via the AWS python cdk
 This repo creates 2 related stacks via the AWS python cdk:
 - AskJermCdkStack: bedrock knowledge base/data source/agent and lambda function to invoke the agent
 - StaticWebsiteStack: web client to invoke the lambda function
@@ -39,7 +42,6 @@ Code:
 - [Lambda function to invoke the agent][lambda]
 - [Web app][web]
 
-### Deploy
 Do **not** deploy both stacks at once using `cdk deploy --all`, because the static website
 must use the Lambda function URL created from the AskJermCdkStack.
 
@@ -64,18 +66,19 @@ cdk destroy --all
 - [AWS Labs GenAI CDK](https://github.com/awslabs/generative-ai-cdk-constructs/tree/main/src/cdk-lib/bedrock)
 
 [Bedrock]: https://aws.amazon.com/bedrock/
-[RAG]: https://aws.amazon.com/what-is/retrieval-augmented-generation/
-[Claude]: https://www.anthropic.com/claude/haiku
 [cdk]: https://docs.aws.amazon.com/cdk/v2/guide/home.html
-[website]: https://jeremyschaub.us/
-[cv]: documents/Schaub_CV_2024-11-full.txt
-[model-access]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html
-[stack]: askjerm_cdk/askjerm_cdk_stack.py
-[lambda]: src/lambda.py
-[web]: src/webapp/index_template.html
+[cdk-install]: https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html
+[Claude]: https://www.anthropic.com/claude/haiku
 [console]: https://console.aws.amazon.com/bedrock/
+[cv]: documents/Schaub_CV_2024-11-full.txt
+[lambda]: src/lambda.py
+[model-access]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html
 [opensearch]: https://aws.amazon.com/opensearch-service/features/serverless/
 [os-pricing]: https://aws.amazon.com/opensearch-service/pricing/
+[RAG]: https://aws.amazon.com/what-is/retrieval-augmented-generation/
+[stack]: askjerm_cdk/askjerm_cdk_stack.py
+[web]: src/webapp/index_template.html
+[website]: https://jeremyschaub.us/
 
 ## Python CDK boilerplate documentation
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
