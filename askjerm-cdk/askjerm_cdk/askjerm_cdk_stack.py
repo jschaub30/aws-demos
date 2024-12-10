@@ -1,3 +1,4 @@
+import os
 import boto3
 from aws_cdk import CfnOutput, Duration, RemovalPolicy, Stack
 from aws_cdk import aws_lambda as _lambda
@@ -7,10 +8,16 @@ from aws_cdk.aws_s3_deployment import BucketDeployment, Source
 from cdklabs.generative_ai_cdk_constructs import bedrock
 from constructs import Construct
 
+AWS_REGION = os.environ["AWS_REGION"]
+
+
+class NoLambdaDeployed(Exception):
+    """when lambda function hasn't been deployed yet"""
+
 
 def read_stack_output(stack_name, key):
     """read output value from a deployed stack"""
-    client = boto3.client("cloudformation")
+    client = boto3.client("cloudformation", region_name=AWS_REGION)
 
     # Get the stack details
     response = client.describe_stacks(StackName=stack_name)
@@ -144,7 +151,7 @@ class StaticWebsiteStack(Stack):
                 "AskJermCdkStack", "LambdaFunctionUrl"
             )
             if not lambda_function_url:
-                raise Exception(
+                raise NoLambdaDeployed(
                     "Problem reading lambda function URL from AskJerm stack"
                 )
             index_content = index_content.replace(

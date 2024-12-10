@@ -3,7 +3,7 @@ import os
 import botocore
 import aws_cdk as cdk
 
-from askjerm_cdk.askjerm_cdk_stack import AskJermCdkStack, StaticWebsiteStack
+from askjerm_cdk.askjerm_cdk_stack import AskJermCdkStack, StaticWebsiteStack, NoLambdaDeployed
 
 app = cdk.App()
 ask_jerm_stack = AskJermCdkStack(
@@ -17,7 +17,7 @@ ask_jerm_stack = AskJermCdkStack(
 
 try:
     StaticWebsiteStack(app, "StaticWebsiteStack")
-except botocore.exceptions.ClientError:
+except NoLambdaDeployed:
     print("Deploy AskJermCdkStack using `cdk deploy AskJermCdkStack` then run again`")
 
 app.synth()
